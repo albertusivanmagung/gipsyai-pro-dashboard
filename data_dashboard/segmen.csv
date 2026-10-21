@@ -1,0 +1,5 @@
+segment_name,segment_description,k_value
+Pelanggan Baru Aktif,Baru membeli satu kali dan transaksinya masih relatif baru; peluang untuk mendorong pembelian kedua.,4
+Pelanggan Tidur,Membeli satu kali dan sudah lama tidak bertransaksi; perlu diaktifkan kembali.,4
+Pelanggan Lama Nilai Rendah,"Membeli satu kali, paling lama tidak aktif, dengan nilai belanja paling kecil.",4
+Pelanggan Setia Bernilai Tinggi,Membeli berulang dengan total belanja tertinggi; kontribusi pendapatan terbesar per pelanggan.,4

@@ -1,7 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-from db import baca
+from data import muat_segmen
 from filters import WARNA_SEGMEN, data_terfilter, fmt_int, fmt_rp
 
 st.title("Profil Segmen dan Channel")
@@ -39,8 +39,7 @@ st.dataframe(
         "repeat": st.column_config.NumberColumn("% repeat", format="%.1f%%"),
     },
 )
-deskripsi = (baca("SELECT segment_name, segment_description FROM dbo.Dim_Segment")
-             .set_index("segment_name")["segment_description"])
+deskripsi = muat_segmen().set_index("segment_name")["segment_description"]
 with st.expander("Deskripsi segmen"):
     for s in URUT:
         st.markdown(f"**{s}**: {deskripsi.get(s, '')}")

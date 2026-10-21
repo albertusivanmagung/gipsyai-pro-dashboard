@@ -3,8 +3,7 @@ from pathlib import Path
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-from data import muat_pelanggan, muat_transaksi
-from db import baca
+from data import muat_k_evaluasi, muat_pelanggan, muat_segmen, muat_transaksi
 from filters import WARNA_SEGMEN, WARNA_UTAMA, data_terfilter, fmt_int
 
 st.title("Hasil Klaster")
@@ -17,12 +16,8 @@ trx_semua = muat_transaksi()
 URUT = list(WARNA_SEGMEN.keys())
 
 # ---- data evaluasi K (dihasilkan KMeans.py) ----
-csv_k = Path(__file__).resolve().parent.parent / "hasil" / "k_evaluasi.csv"
-if not csv_k.exists():
-    st.error(f"File {csv_k} tidak ditemukan. Jalankan KMeans.py terlebih dahulu.")
-    st.stop()
-evk = pd.read_csv(csv_k)
-k_pilih = int(baca("SELECT MAX(k_value) AS k FROM dbo.Dim_Segment")["k"][0])
+evk = muat_k_evaluasi()
+k_pilih = int(muat_segmen()["k_value"].max())
 wcss = evk.loc[evk["K"] == k_pilih, "inertia"].iloc[0]
 sil_total = pel_semua["silhouette_value"].mean()
 

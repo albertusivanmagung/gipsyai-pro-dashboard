@@ -1,6 +1,6 @@
 # filters.py - filter global dan fungsi bantu
 import streamlit as st
-from data import muat_pelanggan, muat_transaksi
+from data import muat_pelanggan, muat_transaksi, sumber
 
 WARNA_UTAMA = "#3987e5"
 WARNA_SEGMEN = {  # urutan tampil sekaligus warna tetap tiap segmen
@@ -32,6 +32,7 @@ def render_sidebar():
                   .sort_values(ascending=False).index)
     with st.sidebar:
         st.header("Filter")
+        st.caption("Sumber data: " + ("snapshot CSV" if sumber() == "file" else "SQL Server"))
         st.date_input("Periode", value=(tmin, tmax), min_value=tmin,
                       max_value=tmax, key="f_periode")
         st.multiselect("Channel", channel, default=channel, key="f_channel")
