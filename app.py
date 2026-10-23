@@ -1,9 +1,11 @@
 # app.py - dashboard: login, filter global, 4 halaman
 import streamlit as st
+from gaya import terapkan_gaya
 from auth import cek_login, tombol_logout
 from filters import render_sidebar
 
 st.set_page_config(page_title="GipsyAI Pro - Channel Akuisisi", layout="wide")
+terapkan_gaya()
 
 if not cek_login():
     st.navigation([st.Page("halaman/p1_overview.py")], position="hidden")

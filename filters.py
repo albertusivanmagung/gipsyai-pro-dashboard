@@ -2,14 +2,40 @@
 import streamlit as st
 from data import muat_pelanggan, muat_transaksi, sumber
 
-WARNA_UTAMA = "#3987e5"
 WARNA_SEGMEN = {  # urutan tampil sekaligus warna tetap tiap segmen
     "Pelanggan Setia Bernilai Tinggi": "#3987e5",
     "Pelanggan Baru Aktif": "#d95926",
     "Pelanggan Tidur": "#199e70",
     "Pelanggan Lama Nilai Rendah": "#c98500",
 }
+# Palet dasar dashboard
+PALET = ["#09c9a8", "#183d60", "#118c89", "#155f72", "#13757d",
+         "#07d9b0", "#13a395", "#174d68", "#0bb79e"]
+WARNA_UTAMA = "#118c89"      # warna utama grafik satu seri
+WARNA_TEKS = "#183d60"       # teks dan judul
 
+# Warna tiap channel (urutan mengikuti jumlah pelanggan, terbesar ke terkecil)
+WARNA_CHANNEL = {
+    "Instagram": "#183d60",              # palet: biru tua
+    "Facebook": "#09c9a8",               # palet: teal terang
+    "Instagram/Facebook": "#f08a4b",     # aksen: oranye
+    "Website": "#7a5fc0",                # aksen: ungu
+    "Google Search": "#118c89",          # palet: teal
+    "Referral (Teman/Kerabat)": "#f4b942",  # aksen: kuning
+    "Iklan": "#ef6f6c",                  # aksen: coral
+    "TikTok": "#4da3e8",                 # aksen: biru langit
+    "YouTube": "#d95f94",                # aksen: rose
+    "Lainnya": "#8bc34a",                # aksen: hijau lime
+    "Media Sosial (umum)": "#155f72",    # palet: biru kehijauan tua
+    "Universitas/Institusi": "#5c6bc0",  # aksen: indigo
+    "Email": "#07d9b0",                  # palet: mint
+    "Tidak diketahui": "#9fb3b8",        # abu-abu (netral untuk data tak diketahui)
+}
+
+
+def warna_channel(nama):
+    """Warna channel; abu-abu kalau namanya belum terdaftar."""
+    return WARNA_CHANNEL.get(nama, "#9fb3b8")
 
 def fmt_int(x):
     return f"{int(x):,}".replace(",", ".")

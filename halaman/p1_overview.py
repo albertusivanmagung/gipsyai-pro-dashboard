@@ -1,8 +1,7 @@
 import plotly.express as px
 import streamlit as st
-from filters import data_terfilter, fmt_int, fmt_juta, fmt_rp
+from filters import data_terfilter, fmt_int, fmt_juta, fmt_rp, warna_channel
 
-WARNA = "#4C78A8"
 SETIA = "Pelanggan Setia Bernilai Tinggi"
 
 st.title("Overview dan Performa Channel")
@@ -12,7 +11,7 @@ if pel.empty or trx.empty:
     st.stop()
 
 # ---- Angka ringkasan ----
-k1, k2, k3, k4, k5 = st.columns([1.4, 1, 1.8, 1.6, 1.2])
+k1, k2, k3, k4, k5 = st.columns([1.4, 1.2, 2.0, 1.6, 1.1])
 k1.metric("Pelanggan baru", fmt_int(len(pel)),
           help="Pelanggan yang pembelian berbayar pertamanya terjadi dalam periode terpilih.")
 k2.metric("Transaksi", fmt_int(len(trx)),
@@ -31,8 +30,10 @@ bulanan = (trx.assign(bulan=trx["tgl"].dt.to_period("M").dt.to_timestamp())
               .groupby("bulan", as_index=False)
               .agg(pendapatan=("amount", "sum"), transaksi=("transaction_key", "count")))
 fig1 = px.bar(bulanan, x="bulan", y="pendapatan", hover_data={"transaksi": True},
-              color_discrete_sequence=[WARNA],
+              color="pendapatan",
+              color_continuous_scale=["#5fd8c5", "#13a395", "#118c89", "#183d60"],
               labels={"bulan": "Bulan", "pendapatan": "Pendapatan (Rp)"})
+fig1.update_coloraxes(showscale=False)
 fig1.update_layout(title="Pendapatan per bulan", margin=dict(t=50, b=10))
 fig1.update_xaxes(tickformat="%b %Y")
 fig1.update_yaxes(tickformat=",.0f")
@@ -43,8 +44,8 @@ per_ch = (pel.groupby("channel_name", as_index=False)
              .agg(pelanggan=("customer_key", "count"))
              .sort_values("pelanggan"))
 fig2 = px.bar(per_ch, x="pelanggan", y="channel_name", orientation="h",
-              color_discrete_sequence=[WARNA],
               labels={"pelanggan": "Jumlah pelanggan", "channel_name": ""})
+fig2.update_traces(marker_color=[warna_channel(c) for c in per_ch["channel_name"]])
 fig2.update_layout(title="Pelanggan per channel", margin=dict(t=50, b=10))
 g2.plotly_chart(fig2, width="stretch")
 

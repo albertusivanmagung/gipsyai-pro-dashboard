@@ -55,7 +55,7 @@ komposisi = (jum / jum.sum().replace(0, 1) * 100)
 komposisi = komposisi.loc[jum.sum(axis=1).sort_values(ascending=False).index]
 komposisi.columns = [c.replace("Pelanggan ", "") for c in komposisi.columns]
 fig_h = px.imshow(komposisi.round(1), text_auto=".1f", aspect="auto",
-                  color_continuous_scale=["#16253b", "#3987e5"],
+                  color_continuous_scale=["#f3fbfa", "#09c9a8", "#118c89", "#183d60"],
                   labels=dict(x="", y="", color="% dalam segmen"))
 fig_h.update_xaxes(side="top", tickangle=0)
 fig_h.update_layout(height=540, margin=dict(t=60, b=10))
@@ -77,7 +77,7 @@ fig_q = px.bar(panjang, x="persen", y="channel", color="segmen", orientation="h"
                category_orders={"segmen": URUT, "channel": [label[c] for c in urut_q]},
                text=panjang["persen"].map(lambda v: f"{v:.0f}%" if v >= 5 else ""),
                labels={"persen": "% pelanggan channel", "channel": "", "segmen": "Segmen"})
-fig_q.update_traces(marker_line_color="#0e1117", marker_line_width=2,
+fig_q.update_traces(marker_line_color="#f3fbfa", marker_line_width=2,
                     textfont_color="#0e1117", insidetextanchor="middle")
 fig_q.update_layout(barmode="stack", height=600, margin=dict(t=110, b=10),
                     legend=dict(orientation="h", y=1.12, x=0))
