@@ -51,18 +51,6 @@ with st.expander("Informasi model", expanded=True):
         "dalam satu kelompok saling mirip dan berbeda dari kelompok lain."
     )
 
-# ---- Toggle informasi halaman ----
-with st.expander("Cara membaca halaman ini"):
-    st.markdown(
-        "- **Angka di bagian atas** (Jumlah klaster, Silhouette Score, WCSS, Pelanggan dimodelkan) "
-        "menilai kualitas model. Arahkan kursor ke ikon (?) untuk penjelasan tiap angka.\n"
-        "- **Elbow Method** dan **Silhouette Score per K** membantu memilih jumlah klaster. "
-        "Keduanya memakai seluruh data, jadi tidak berubah saat filter diganti.\n"
-        "- **Ukuran klaster** menunjukkan jumlah pelanggan tiap segmen, dan **Sebaran klaster** "
-        "menunjukkan posisi setiap pelanggan. Keduanya mengikuti filter di sidebar.\n"
-        "- **Pada Sebaran klaster**, satu titik adalah satu pelanggan. Sumbu Monetary memakai skala "
-        "logaritma, dan titik yang berhimpit berasal dari harga paket yang sama."
-    )
 
 # ---- Elbow dan Silhouette per K ----
 TIP_ELBOW = (
