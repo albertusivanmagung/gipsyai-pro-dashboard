@@ -7,8 +7,6 @@ from data import muat_k_evaluasi, muat_pelanggan, muat_segmen, muat_transaksi
 from filters import WARNA_SEGMEN, WARNA_UTAMA, data_terfilter, fmt_int
 
 st.title("Hasil Klaster")
-st.caption("Informasi model, grafik Elbow, dan Silhouette memakai seluruh data (tidak terpengaruh filter). "
-           "Ukuran dan sebaran klaster mengikuti filter di sisi kiri.")
 
 pel_semua = muat_pelanggan()
 pel, _ = data_terfilter()
@@ -23,10 +21,16 @@ sil_total = pel_semua["silhouette_value"].mean()
 
 # ---- angka model ----
 m1, m2, m3, m4 = st.columns(4)
-m1.metric("Jumlah klaster (K)", k_pilih)
-m2.metric("Silhouette Score", f"{sil_total:.4f}".replace(".", ","))
-m3.metric("WCSS (inertia)", fmt_int(wcss))
-m4.metric("Pelanggan dimodelkan", fmt_int(len(pel_semua)))
+m1.metric("Jumlah klaster (K)", k_pilih,
+          help="Jumlah kelompok pelanggan yang dibentuk model. Di sini pelanggan dibagi menjadi 4 kelompok (segmen).")
+m2.metric("Silhouette Score", f"{sil_total:.4f}".replace(".", ","),
+          help="Ukuran seberapa jelas pelanggan terpisah antar kelompok, dari −1 sampai 1. "
+               "Makin dekat ke 1 makin jelas. Nilai sekitar 0 berarti kelompok saling tumpang tindih.")
+m3.metric("WCSS (inertia)", fmt_int(wcss),
+          help="Jumlah jarak kuadrat setiap pelanggan ke pusat kelompoknya. Makin kecil, anggota kelompok makin rapat. "
+               "Dipakai untuk membandingkan jumlah K pada grafik Elbow.")
+m4.metric("Pelanggan dimodelkan", fmt_int(len(pel_semua)),
+          help="Jumlah pelanggan yang ikut dikelompokkan oleh model (seluruh data, tidak terpengaruh filter).")
 awal, akhir = trx_semua["tgl"].min(), trx_semua["tgl"].max()
 
 with st.expander("Informasi model", expanded=True):
@@ -45,6 +49,19 @@ with st.expander("Informasi model", expanded=True):
         "masuk ke pusat terdekat, (4) pusat dihitung ulang dari rata-rata anggotanya, "
         "(5) langkah 3 dan 4 diulang sampai kelompok tidak berubah lagi. Hasilnya, pelanggan "
         "dalam satu kelompok saling mirip dan berbeda dari kelompok lain."
+    )
+
+# ---- Toggle informasi halaman ----
+with st.expander("Cara membaca halaman ini"):
+    st.markdown(
+        "- **Angka di bagian atas** (Jumlah klaster, Silhouette Score, WCSS, Pelanggan dimodelkan) "
+        "menilai kualitas model. Arahkan kursor ke ikon (?) untuk penjelasan tiap angka.\n"
+        "- **Elbow Method** dan **Silhouette Score per K** membantu memilih jumlah klaster. "
+        "Keduanya memakai seluruh data, jadi tidak berubah saat filter diganti.\n"
+        "- **Ukuran klaster** menunjukkan jumlah pelanggan tiap segmen, dan **Sebaran klaster** "
+        "menunjukkan posisi setiap pelanggan. Keduanya mengikuti filter di sidebar.\n"
+        "- **Pada Sebaran klaster**, satu titik adalah satu pelanggan. Sumbu Monetary memakai skala "
+        "logaritma, dan titik yang berhimpit berasal dari harga paket yang sama."
     )
 
 # ---- Elbow dan Silhouette per K ----
@@ -86,9 +103,6 @@ fig_s.add_vline(x=k_pilih, line_dash="dash", annotation_text=f"K = {k_pilih}")
 fig_s.update_layout(margin=dict(t=10, b=10))
 fig_s.update_xaxes(dtick=1)
 g2.plotly_chart(fig_s, width="stretch")
-g2.caption("K = 2 memberi skor tertinggi, tetapi hanya memisahkan pembeli satu kali dan pembeli "
-           "berulang, terlalu kasar untuk analisis channel. K = 4 dipilih karena skornya tertinggi "
-           "di antara K = 3 sampai 6, dan semua klasternya cukup besar.")
 
 # ---- Ukuran klaster dan Silhouette per klaster ----
 st.subheader("Ukuran klaster")
@@ -100,11 +114,6 @@ u1, u2 = st.columns([1, 1])
 ukuran = (pel.groupby("segment_name").agg(pelanggan=("customer_key", "count"))
              .reindex(URUT).fillna(0).reset_index())
 ukuran["persen"] = ukuran["pelanggan"] / ukuran["pelanggan"].sum() * 100
-fig_u = px.bar(ukuran, x="segment_name", y="pelanggan", color="segment_name",
-               color_discrete_map=WARNA_SEGMEN, category_orders={"segment_name": URUT},
-               text=ukuran["persen"].map(lambda v: f"{v:.1f}%".replace(".", ",")),
-               labels={"segment_name": "", "pelanggan": "Jumlah pelanggan"})
-fig_u.update_traces(textposition="outside")
 fig_u = px.bar(ukuran, x="pelanggan", y="segment_name", color="segment_name",
                orientation="h", color_discrete_map=WARNA_SEGMEN,
                category_orders={"segment_name": URUT},
@@ -137,5 +146,3 @@ fig_sb.update_yaxes(tickvals=[10000, 20000, 50000, 100000, 200000, 500000],
                     ticktext=["10rb", "20rb", "50rb", "100rb", "200rb", "500rb"])
 fig_sb.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
 st.plotly_chart(fig_sb, width="stretch")
-st.caption("Setiap titik adalah satu pelanggan. Sumbu Monetary memakai skala logaritma. "
-           "Banyak titik berhimpit karena harga paket yang sama.")

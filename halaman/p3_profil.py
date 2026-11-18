@@ -5,6 +5,8 @@ from data import muat_segmen
 from filters import WARNA_SEGMEN, data_terfilter, fmt_int, fmt_rp
 
 st.title("Profil Segmen dan Channel")
+
+# ---- Toggle informasi halaman ----
 pel, trx = data_terfilter()
 if pel.empty:
     st.warning("Tidak ada pelanggan untuk filter yang dipilih.")
@@ -32,10 +34,14 @@ st.dataframe(
         "segment_name": "Segmen",
         "pelanggan": "Pelanggan",
         "persen_pelanggan": st.column_config.NumberColumn("% pelanggan", format="%.1f%%"),
-        "persen_pendapatan": st.column_config.NumberColumn("% pendapatan", format="%.1f%%"),
-        "recency": st.column_config.NumberColumn("Recency rata-rata (hari)", format="%.1f"),
-        "frequency": st.column_config.NumberColumn("Frequency rata-rata", format="%.2f"),
-        "monetary": "Monetary rata-rata",
+        "persen_pendapatan": st.column_config.NumberColumn("% pendapatan", format="%.1f%%",
+                                                           help="Porsi segmen terhadap total pendapatan."),
+        "recency": st.column_config.NumberColumn("Recency rata-rata (hari)", format="%.1f",
+                                                  help="Rata-rata hari sejak pembelian terakhir. Makin kecil, makin baru bertransaksi."),
+        "frequency": st.column_config.NumberColumn("Frequency rata-rata", format="%.2f",
+                                                    help="Rata-rata jumlah pembelian per pelanggan."),
+        "monetary": st.column_config.TextColumn("Monetary rata-rata",
+                                              help="Rata-rata total belanja per pelanggan."),
         "repeat": st.column_config.NumberColumn("% repeat", format="%.1f%%"),
     },
 )
@@ -83,6 +89,3 @@ fig_q.update_layout(barmode="stack", height=600, margin=dict(t=110, b=10),
                     legend=dict(orientation="h", y=1.12, x=0))
 fig_q.update_xaxes(range=[0, 100])
 st.plotly_chart(fig_q, width="stretch")
-st.caption("Porsi Baru Aktif dan Tidur dipengaruhi kapan sebuah channel mulai atau berhenti dipakai "
-           "(lihat kolom akuisisi di halaman Overview), sehingga perbandingan kualitas channel "
-           "terutama dibaca dari porsi segmen Setia. Channel dengan n kecil kurang dapat diandalkan.")

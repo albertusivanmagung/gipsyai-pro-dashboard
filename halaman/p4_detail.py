@@ -13,9 +13,12 @@ if cari.strip():
 tabel = tabel.sort_values("monetary", ascending=False)
 
 c1, c2, c3 = st.columns(3)
-c1.metric("Pelanggan ditampilkan", fmt_int(len(tabel)))
-c2.metric("Pelanggan sesuai filter", fmt_int(len(pel)))
-c3.metric("Total monetary", fmt_rp(tabel["monetary"].sum()))
+c1.metric("Pelanggan ditampilkan", fmt_int(len(tabel)),
+          help="Jumlah pelanggan pada tabel setelah filter dan pencarian ID.")
+c2.metric("Pelanggan sesuai filter", fmt_int(len(pel)),
+          help="Jumlah pelanggan yang sesuai filter di sidebar, sebelum pencarian ID.")
+c3.metric("Total monetary", fmt_rp(tabel["monetary"].sum()),
+          help="Total belanja seluruh pelanggan yang tampil pada tabel.")
 
 tampil = tabel[["customer_anon_id", "channel_name", "segment_name", "tgl_akuisisi",
                 "recency_days", "frequency", "monetary"]].copy()
@@ -42,5 +45,3 @@ csv = (tampil.rename(columns={
        .to_csv(index=False).encode("utf-8-sig"))
 st.download_button("Unduh CSV", csv, file_name="detail_pelanggan.csv",
                    mime="text/csv", disabled=tampil.empty)
-st.caption("Nama, email, dan nomor HP pelanggan tidak ditampilkan dan tidak ikut diunduh. "
-           "Data yang diunduh sesuai filter dan pencarian yang sedang aktif.")

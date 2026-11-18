@@ -18,7 +18,8 @@ k2.metric("Transaksi", fmt_int(len(trx)),
           help="Semua transaksi berbayar yang terjadi dalam periode, termasuk dari pelanggan lama.")
 k3.metric("Pendapatan", fmt_juta(trx["amount"].sum()),
           help=f"Total nilai transaksi berbayar dalam periode: {fmt_rp(trx['amount'].sum())}")
-k4.metric("Rata-rata transaksi", fmt_rp(trx["amount"].mean()))
+k4.metric("Rata-rata transaksi", fmt_rp(trx["amount"].mean()),
+          help="Rata-rata nilai satu transaksi berbayar: total pendapatan dibagi jumlah transaksi.")
 repeat = (pel["frequency"] > 1).mean() * 100
 k5.metric("Repeat", f"{repeat:.1f}%".replace(".", ","),
           help="Persentase pelanggan baru yang bertransaksi lebih dari satu kali.")
@@ -38,7 +39,6 @@ fig1.update_layout(title="Pendapatan per bulan", margin=dict(t=50, b=10))
 fig1.update_xaxes(tickformat="%b %Y")
 fig1.update_yaxes(tickformat=",.0f")
 g1.plotly_chart(fig1, width="stretch")
-g1.caption("Juni 2025 (mulai 15 Juni) dan Agustus 2026 (sampai 16 Agustus) belum satu bulan penuh.")
 
 per_ch = (pel.groupby("channel_name", as_index=False)
              .agg(pelanggan=("customer_key", "count"))
@@ -75,7 +75,7 @@ st.dataframe(
     tabel, hide_index=True, width="stretch",
     column_config={
         "channel_name": "Channel",
-                "pelanggan": "Pelanggan baru",
+        "pelanggan": "Pelanggan baru",
         "transaksi": "Transaksi dalam periode",
         "pendapatan": "Pendapatan dalam periode",
         "rata_belanja": "Rata-rata belanja per pelanggan",
@@ -84,13 +84,4 @@ st.dataframe(
         "awal": "Akuisisi pertama",
         "akhir": "Akuisisi terakhir",
     },
-)
-st.caption(
-    "ROAS tidak dapat dihitung karena data biaya iklan tidak tersedia pada penelitian ini. "
-    "Tabel ini memberi dasar pertimbangan alokasi anggaran lewat kualitas pelanggan per channel "
-    "(porsi pelanggan repeat dan segmen Setia). Channel dengan pelanggan sangat sedikit "
-    "(misalnya Email dan Tidak diketahui) persentasenya kurang dapat diandalkan. "
-    "Pelanggan baru adalah pelanggan yang pembelian pertamanya terjadi dalam periode; "
-    "transaksi dan pendapatan mencakup semua pembelian dalam periode, termasuk dari pelanggan lama. "
-    "Kolom akuisisi pertama dan terakhir menunjukkan kapan opsi channel dipakai."
 )
